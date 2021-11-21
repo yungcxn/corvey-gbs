@@ -1,0 +1,38 @@
+#lang racket
+
+(require web-server/web-server
+         web-server/dispatch
+         web-server/servlet-env
+         web-server/servlet)
+(require web-server/http/redirect)
+(require racket/list   web-server/templates)
+(require xml)
+
+
+(define (request->post-data req)
+  )
+
+
+(define (index-start req)
+
+  (response/xexpr `(html
+                    (head (title Corvey-GBS))
+                    (body
+
+  (img ([src "/logo.png"] [alt "corvey-logo"]))
+  (p "Hi")
+                     
+                     ))))
+
+
+
+
+
+
+  
+
+
+(serve/servlet index-start
+ #:servlet-path "/"
+ #:server-root-path (current-directory)
+)

@@ -1,0 +1,68 @@
+kinder
+  sammlung von
+    porträt
+    vorname + nachname
+
+  suche nach name
+  ->Profilweiterleitung
+
+  Profil:
+    porträt
+    vorname + nachname
+    geb.
+    klasse / lehrer
+    strasse +     hausnummer
+    plz + ort
+    1. notfallnummer
+    2. notfallnummer
+    besonderes (allergien etc)
+    betreuungstage + betreuungsuhrzeit
+
+kalender
+  stellt heutiges datum
+
+datum
+  bei reload "heute"
+
+dashboard von allen kindern die am eingestellten datum kommen sollen
+    name
+    anwesend? bool (grau wenn 1 der anderen true)
+    abgeholt? bool  (grau wenn 1 der anderen true)
+    entschuldigt? bool (grau wenn 1 der anderen true)
+    abholuhrzeit
+    infobutton -> profilweiterleitung
+
+
+
+---------------------------------------------------------------------------------
+db-design:
+
+kinder
+  id                              INT
+  vorname                         STRING
+  nachname                        STRING
+  geb                             DATE
+  klasse/lehrer                   STRING
+  strasse + hausnummer            STRING
+  plz + ort                       STRING
+  notfallnummer1                  STRING
+  notfallnummer2                  STRING
+  specials                        STRING
+  AbholungMontag                  STRING
+  AbholungDienstag                STRING
+  AbholungMittwoch                STRING
+  AbholungDonnerstag              STRING
+  AbholungFreitag                 STRING
+
+anwesendlog
+  date                            DATE
+  id                              INT
+
+abholunglog
+  date                            DATE
+  id                              INT
+  stamp                           TIMESTAMP
+
+entschuldigunglog
+  date                            DATE
+  id                              INT
