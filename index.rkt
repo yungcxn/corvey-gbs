@@ -7,14 +7,18 @@
 (require web-server/http/redirect)
 (require racket/list   web-server/templates)
 (require xml)
- (require racket/struct)
+(require racket/struct)
 (require racket/date)
 (require db)
 (require racket/format)
 
+
+(require "info.rkt")
+
 (define (request->post-data req)
   (fifth (struct->list req))
   )
+
 
 
 
@@ -246,11 +250,17 @@ datum changeability
 
 
 
+(define-values (dispatch input-url)
+  (dispatch-rules
+   (("info" (integer-arg)) info-app)
+   (("") index-start)
+   (else index-start)))
 
   
 
 
-(serve/servlet index-start
+(serve/servlet dispatch
  #:servlet-path "/"
  #:server-root-path (current-directory)
+  #:servlet-regexp #rx""
 )
