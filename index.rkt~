@@ -11,10 +11,9 @@
 (require racket/date)
 (require db)
 (require racket/format)
-(require web-server/dispatchers/dispatch-log)
+
 
 (require "info.rkt")
-(require "search.rkt")
 
 (define (request->post-data req)
   (fifth (struct->list req))
@@ -205,15 +204,6 @@ datum changeability
 
 (define (index-start req)
 
-
-  (println (format
- "~s\n"
- (list 'from (request-client-ip req)
-       'to (request-host-ip req)
-       'for (url->string (request-uri req)) 'at
-       (date->string
-        (seconds->date (current-seconds)) #t)))
-)
   (define post-data (request->post-data req))
   
   (when (bytes? post-data)
@@ -240,9 +230,8 @@ datum changeability
   
   
   (response/xexpr `(html
-                    (head (title "Corvey-GBS")
-                          ;(link ((rel "stylesheet") (href "style.css")))
-                          )
+                    (head (title Corvey-GBS)
+                          (link ((rel "stylesheet") (href "style.css"))))
                     (body
 
   (img ([src "/logo.png"] [alt "corvey-logo"]))
@@ -264,7 +253,6 @@ datum changeability
 (define-values (dispatch input-url)
   (dispatch-rules
    (("info" (integer-arg)) info-app)
-   (("search" (string-arg)) search-app)
    (("") index-start)
    (else index-start)))
 
