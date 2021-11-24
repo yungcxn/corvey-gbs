@@ -246,7 +246,13 @@ datum changeability
                     (body
 
   (img ([src "/logo.png"] [alt "corvey-logo"]))
-  (p "Hi")
+
+
+  (form ((method "get") (action "/search")  (id "search" ))
+                 (label ((for "search-field")) "Suche Kind: ")
+                 (input ((type "text") (id "search-field") (name "search-field")))
+                
+                 )
 
   (iframe ((name "iframedummy") (style "display: none")))
 
@@ -264,9 +270,10 @@ datum changeability
 (define-values (dispatch input-url)
   (dispatch-rules
    (("info" (integer-arg)) info-app)
-   (("search" (string-arg)) search-app)
+   (("search") search-app)
    (("") index-start)
-   (else index-start)))
+   (else index-start)
+   ))
 
   
 

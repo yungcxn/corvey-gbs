@@ -67,37 +67,29 @@
        (date->string
         (seconds->date (current-seconds)) #t)))
 )
+
+  
   
   (response/xexpr
    
-   `(html (head (title "Info"))
+   `(html (head (title "Info")
+                )
           
           (body
 
-           (form ((onsubmit "search_submit();") (id "search" ))
-                 (label ((for "search-field")) "Suche Kind: ")
-                 (input ((type "text") (id "search-field") (name "search-field")))
-                
-                 )
+           
 
-           (script ((type "text/javascript"))
-                   ,(make-cdata
-                     #f #f
-                     (string-append "function search_submit() {"
-                     "document.getElementById( \"search-field\").addEventListener(\"keyup\", function(event) {"
-                     "if (event.keyCode === 13) {"
-                     "var x = document.getElementById(\"search-field\");"
-                     "window.location.href = 'https://google.de' ;" ;not working
-                     "return false;"
-                     "}"
-                     "});"
-                     "}"
-                     
-                     )))
+           
 
            
            
            (h1 "Information")
+
+           (form ((method "get") (action "../search")  (id "search" ))
+                 (label ((for "search-field")) "Suche Kind: ")
+                 (input ((type "text") (id "search-field") (name "search-field")))
+                
+                 )
            (p , (string-append vorname " " nachname))
            (div ((id "info"))
 
