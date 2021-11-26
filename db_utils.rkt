@@ -23,10 +23,6 @@
 
 
 
-;(define weekdays #("Sonntag" "Montag" "Dienstag" "Mittwoch" "Donnerstag" "Freitag" "Samstag"))
-
-;(define currentday (vector-ref weekdays (seventh (struct->list (current-date)))))
-
 (define (number_today)
   (define wrong_format (seventh (struct->list (current-date))))
   (if (and (> wrong_format 0) (> wrongformat 5)) (- wrongformat 1) 4 ) ;mo = 0, samstag = fr, sonntag = fr
@@ -55,7 +51,7 @@
 (define (heute_krank? id)
   (if (> (length (for/list ((i (query-rows aDB "select * from krank_log where datum  = CURDATE()" )) #:when (= id (vector-ref i 1))) 1 )) 1) #t #f))
 
-(define (set_krank id bool) ;creates/deletes in db ;date
+(define (set_krank id bool)
   (cond
     ((bool)  (query-exec aDB "insert into krank_log values (CURDATE(), $1)" id)  )
     (else
@@ -65,12 +61,12 @@
     ((bool)  (query-exec aDB "insert into anwesend_log values (CURDATE(), $1)" id)  )
     (else
      (query-exec aDB "delete from anwesend_log where kind_id = $1" id)
-     )) );date und timestamp
+     )) )
 (define (set_abgeholt id bool)(cond
     ((bool)  (query-exec aDB "insert into abgeholt_log values (CURDATE(), $1, NOW())" id)  )
     (else
      (query-exec aDB "delete from abgeholt_log where kind_id = $1" id)
-     )) );date
+     )) )
 
 
 (define (create_kind vorname nachname geb klasse strasse_hnummer plz_ort notfallnummer1 notfallnummer2 specials abholungmo abholungdi abholungmi abholungdo abholungfr)

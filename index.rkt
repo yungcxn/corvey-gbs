@@ -22,21 +22,6 @@
 
 
 
-
-#|
-
-TODO
-
-post-handling
-turning other buttons off when anwesend/krank/abgeholt
-dispatch rules zu info page
-datum changeability
-
-|#
-
-
-
-
 ;
 ;  db_utils start
 ;
@@ -59,10 +44,10 @@ datum changeability
 
 (define (number_today)
   (define wrong_format (seventh (struct->list (current-date))))
-  (if (and (> wrong_format 0) (< wrong_format 5)) (- wrong_format 1) 4 ) ;mo = 0, samstag = fr, sonntag = fr
+  (if (and (> wrong_format 0) (< wrong_format 5)) (- wrong_format 1) 4 )
   )
 
-;10th = monday
+
 (define (get_abholung_heute data number_today)
   (vector-ref data
               (+ number_today 10)
@@ -241,7 +226,7 @@ datum changeability
   
   (response/xexpr `(html
                     (head (title "Corvey-GBS")
-                          ;(link ((rel "stylesheet") (href "style.css")))
+                          ;(link ((rel "stylesheet") (href "style.css"))) klappt nicht
                           )
                     (body
 
@@ -259,12 +244,12 @@ datum changeability
   '(div ((class "panels")) ,@(map kind_panel (get_all_kind_ids_heute) ))
   
   
-                     )))
+                   ))
+
 
   )
 
-
-
+)
 
 
 (define-values (dispatch input-url)
@@ -274,9 +259,6 @@ datum changeability
    (("") index-start)
    (else index-start)
    ))
-
-  
-
 
 (serve/servlet dispatch
  #:servlet-path "/"
