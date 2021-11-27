@@ -13,7 +13,7 @@
 
 (provide search-app)
 
-
+(require "style.rkt")
 (define aDB
   (sqlite3-connect #:database
       "gbs.db"
@@ -47,7 +47,7 @@
     ))
 
 (define (produce_result datavec)
-  `(div ((id "result")) (a ((href , (string-append "../info/" (number->string (vector-ref datavec 0))) )) ,(string-append (vector-ref datavec 1) " " (vector-ref datavec 2)) )))
+  `(div ((id "result")) (a ((id "result")(href , (string-append "../info/" (number->string (vector-ref datavec 0))) )) ,(string-append (vector-ref datavec 1) " " (vector-ref datavec 2)) )))
 
 (define (search-app req)
 
@@ -60,17 +60,28 @@
   (response/xexpr 
 
   `(html
-    (title "Suche")
-    (body 
+    (head (title "Corvey-GBS") (style
+                           ,stylesheet
+                           ))
+    
+    (body
+
+     (header
+      (img ([src "/logo.png"] [alt "corvey-logo"]))
+      
       (h1 "Suchergebnisse")
 
       (form ((method "get") (action "")  (id "search" ))
-                 (label ((for "search-field")) "Suche Kind: ")
-                 (input ((type "text") (id "search-field") (name "search-field")))
-                
+                 (input ((type "text") (placeholder " Suche Kind") (id "search-field") (name "search-field")))
+      )
       )
 
-      ,@(map produce_result (filter_fullname_list dbdata query-str))
+     (div ((id "results"))
+      ,@(map produce_result (filter_fullname_list dbdata query-str)))
+
+      (footer
+    (p "\u00A9 Can Nayci") 
+   )
   ))
 )
 

@@ -15,6 +15,7 @@
 
 (require "info.rkt")
 (require "search.rkt")
+(require "style.rkt")
 
 (define (request->post-data req)
   (fifth (struct->list req))
@@ -149,8 +150,10 @@
   
   `(div ((class "kindpanel") (id ,(string-append "kindpanel-" (~v kindid))))
 
-(p ,fullname)
+(p ((id "fullname")) ,fullname)
 
+
+(section ((class "formsection") (id "abgeholt"))
  (p ((id "subtext")) "abgeholt?")
 (form ((id "abgeholt_form") (method "post") (action "") (target "iframedummy"))
          (label ((class "switch"))
@@ -159,7 +162,8 @@
          (input ((id , abgeholt_button_id)(name, (string-append "abgeholt-" (~v kindid))) (value "1")(type "checkbox") , (if abgeholt? `(checked "true") `(href "#") )
                                    (onchange , (on_button_change "abgeholt")) ))
          (span ((class "slider round")))))
-
+)
+(section ((class "formsection")(id "krank"))
 (p ((id "subtext")) "krank?")
 (form ((id "krank_form") (method "post") (action "") (target "iframedummy"))
          (label ((class "switch"))
@@ -168,7 +172,8 @@
          (input ((id, krank_button_id)(name , (string-append "krank-" (~v kindid))) (value "1")(type "checkbox") , (if krank? `(checked "true") `(href "#") )
                                 (onchange , (on_button_change "krank")) ))
          (span ((class "slider round")))))
-
+)
+(section ((class "formsection")(id "anwesend"))
 (p ((id "subtext")) "anwesend?")
 (form ((id "anwesend_form") (method "post") (action "") (target "iframedummy"))
          (label ((class "switch"))
@@ -178,9 +183,9 @@
                                    (onchange , (on_button_change "anwesend")) ))
          (span ((class "slider round")))
          ))
-
-(p ,(string-append "Abholung: " abholzeit))
- (a ((href ,(string-append "/info/" (~v kindid)))) "i")
+)
+(p ((id  "abholungsinfo")),(string-append "Abholung: " abholzeit))
+ (a ((id "info") (href ,(string-append "/info/" (~v kindid)))) "i")
  
         )
 
@@ -222,28 +227,36 @@
       ((and (equal? state "krank") (not flag)) (set_krank kindid0 #f)))
       
     )
+
   
   
   (response/xexpr `(html
                     (head (title "Corvey-GBS")
-                          ;(link ((rel "stylesheet") (href "style.css"))) klappt nicht
+                          (style
+                           ,stylesheet
+                           )
+                          ;(link ((rel "stylesheet") (href "/style.css"))) ;klappt nicht
                           )
                     (body
 
-  (img ([src "/logo.png"] [alt "corvey-logo"]))
+                     (header
+                      (img ([src "/logo.png"] [alt "corvey-logo"]))
 
+                      (h1 "Dashboard")
 
-  (form ((method "get") (action "/search")  (id "search" ))
-                 (label ((for "search-field")) "Suche Kind: ")
-                 (input ((type "text") (id "search-field") (name "search-field")))
+                      (form ((method "get") (action "/search")  (id "search" ))
+                             (input ((type "text") (placeholder " Suche Kind") (id "search-field") (name "search-field")))
                 
-                 )
+                      )
+                      )
 
   (iframe ((name "iframedummy") (style "display: none")))
 
   '(div ((class "panels")) ,@(map kind_panel (get_all_kind_ids_heute) ))
   
-  
+  (footer
+    (p "\u00A9 Can Nayci") 
+   )
                    ))
 
 

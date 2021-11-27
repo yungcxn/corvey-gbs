@@ -10,6 +10,7 @@
 
 (provide info-app)
 
+(require "style.rkt")
 
 (define (number_today)
   (define wrong_format (seventh (struct->list (current-date))))
@@ -72,7 +73,10 @@
   
   (response/xexpr
    
-   `(html (head (title "Info")
+   `(html (head (title "Corvey-GBS")
+                (style
+                           ,stylesheet
+                           )
                 )
           
           (body
@@ -81,18 +85,22 @@
 
            
 
-           
-           
+           (header
+
+            (img ([src "/logo.png"] [alt "corvey-logo"]))
+            
            (h1 "Information")
 
            (form ((method "get") (action "../search")  (id "search" ))
-                 (label ((for "search-field")) "Suche Kind: ")
-                 (input ((type "text") (id "search-field") (name "search-field")))
+                 (input ((type "text") (placeholder " Suche Kind") (id "search-field") (name "search-field")))
                 
                  )
-           (p , (string-append vorname " " nachname))
-           (div ((id "info"))
 
+           )
+           
+           (p  ((id "fullnameinfo")) , (string-append vorname " " nachname))
+           (div ((id "info"))
+                (section ((id "infosection")) 
                 (p , (string-append "Vorname: " vorname))
                 (p , (string-append "Nachname: " nachname))
                 (p , (string-append "Geburtstag:  " geburtstag))
@@ -102,7 +110,7 @@
                 (p , (string-append "Notfallnummer 1: " notfallnr1))
                 (p , (string-append "Notfallnummer 2: " notfallnr2))
                 (p , (string-append "Besonderes:  " specials))
-
+                )
                 (table ((id "abholungstable"))
                        (colgroup
                         (col ((style "background-color:#97DB9A;")))
@@ -136,6 +144,11 @@
                 
                 
                 )
+
+           (br)
+           (footer
+    (p "\u00A9 Can Nayci") 
+   )
             
 
            ))))
