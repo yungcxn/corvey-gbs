@@ -8,7 +8,7 @@
 (require racket/format)
 (require xml)
 
-(provide info-app)
+(provide edit-app)
 
 (require "style.rkt")
 
@@ -35,25 +35,8 @@
 
   (when (or (> kindid highest_id) (< kindid 0))
     (response/xexpr
-   `(html (head (title "Corvey-GBS")
-                (style
-                           ,stylesheet
-                           ))
-          
-          (body
-          (header
-
-            (img ([src "/logo.png"] [alt "corvey-logo"]))
-            
-           (h1 "Bearbeite Kind")
-
-           (form ((method "get") (action "../search")  (id "search" ))
-                 (input ((type "text") (placeholder " Suche Kind") (id "search-field") (name "search-field")))
-                
-                 )
-
-           )
-           (p  "Dieses Kind ist nicht registriert!"))))
+   `(html (head (title "Info"))
+          (body (p  "Dieses Kind ist nicht registriert!"))))
 
     ); error handling
   
@@ -78,7 +61,7 @@
   (define zahl_heute (number_today)) ;mo 0, di 1 mi 2 do 3 fr 4 sa fr so fr
 
  (println (format
- "from info.rkt: ~s\n"
+ "from edit.rkt: ~s\n"
  (list 'from (request-client-ip req)
        'to (request-host-ip req)
        'for (url->string (request-uri req)) 'at
@@ -106,7 +89,7 @@
 
             (img ([src "/logo.png"] [alt "corvey-logo"]))
             
-           (h1 "Information")
+           (h1 "Bearbeite Kind")
 
            (form ((method "get") (action "../search")  (id "search" ))
                  (input ((type "text") (placeholder " Suche Kind") (id "search-field") (name "search-field")))
@@ -162,15 +145,11 @@
                 
                 )
 
-           
-   (div ((id "spacer")) (a ((id "editlink") (href ,(string-append "../edit/" kindid_str))) "Bearbeite Info"))
-          
-
            (br)
-           
            (footer
     (p "\u00A9 Can Nayci") 
-   ) 
+   )
+            
 
            ))))
 

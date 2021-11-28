@@ -16,6 +16,7 @@
 (require "info.rkt")
 (require "search.rkt")
 (require "style.rkt")
+(require "edit.rkt")
 
 (define (request->post-data req)
   (fifth (struct->list req))
@@ -252,7 +253,7 @@
 
   (iframe ((name "iframedummy") (style "display: none")))
 
-  '(div ((class "panels")) ,@(map kind_panel (get_all_kind_ids_heute) ))
+  (div ((class "panels")) ,@(map kind_panel (get_all_kind_ids_heute) ))
   
   (footer
     (p "\u00A9 Can Nayci") 
@@ -269,6 +270,7 @@
   (dispatch-rules
    (("info" (integer-arg)) info-app)
    (("search") search-app)
+   (("edit" (integer-arg)) edit-app)
    (("") index-start)
    (else index-start)
    ))

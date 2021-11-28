@@ -8,7 +8,7 @@
 (require racket/format)
 (require xml)
 
-(provide info-app)
+(provide edit-app)
 
 (require "style.rkt")
 
@@ -27,7 +27,7 @@
   (query-row aDB "select * from kinder where kind_id = $1" id)
 )
 
-(define (info-app req kindid)
+(define (edit-app req kindid)
 
   (define kindid_str (~v kindid))
 
@@ -39,9 +39,8 @@
                 (style
                            ,stylesheet
                            ))
-          
           (body
-          (header
+(header
 
             (img ([src "/logo.png"] [alt "corvey-logo"]))
             
@@ -78,7 +77,7 @@
   (define zahl_heute (number_today)) ;mo 0, di 1 mi 2 do 3 fr 4 sa fr so fr
 
  (println (format
- "from info.rkt: ~s\n"
+ "from edit.rkt: ~s\n"
  (list 'from (request-client-ip req)
        'to (request-host-ip req)
        'for (url->string (request-uri req)) 'at
@@ -106,7 +105,7 @@
 
             (img ([src "/logo.png"] [alt "corvey-logo"]))
             
-           (h1 "Information")
+           (h1 "Bearbeite Kind")
 
            (form ((method "get") (action "../search")  (id "search" ))
                  (input ((type "text") (placeholder " Suche Kind") (id "search-field") (name "search-field")))
@@ -116,17 +115,24 @@
            )
            
            (p  ((id "fullnameinfo")) , (string-append vorname " " nachname))
-           (div ((id "info"))
-                (section ((id "infosection")) 
-                (p , (string-append "Vorname: " vorname))
-                (p , (string-append "Nachname: " nachname))
-                (p , (string-append "Geburtstag:  " geburtstag))
-                (p , (string-append "Klasse:  " klasse))
-                (p , (string-append "Strasse:  " strasse))
-                (p , (string-append "PLZ:  " plz))
-                (p , (string-append "Notfallnummer 1: " notfallnr1))
-                (p , (string-append "Notfallnummer 2: " notfallnr2))
-                (p , (string-append "Besonderes:  " specials))
+           (form ((method "get") (action "../sent")(id "info"))
+                (section ((id "infosection"))
+                  (div ((id "infodiv")) (p "Vorname: ")
+                       (input ((type "text") (name "vorname") (id "info-input") (value ,vorname))))
+                  (div ((id "infodiv")) (p "Nachname: ")
+                       (input ((type "text") (name "nachname") (id "info-input") (value ,nachname))))
+                  (div ((id "infodiv")) (p "Klasse: ")
+                       (input ((type "text") (name "klasse") (id "info-input") (value ,klasse))))
+                  (div ((id "infodiv")) (p "Strasse: ")
+                       (input ((type "text") (name "strasse") (id "info-input") (value ,strasse))))
+                  (div ((id "infodiv")) (p "PLZ: ")
+                       (input ((type "text") (name "plz") (id "info-input") (value ,plz))))
+                  (div ((id "infodiv")) (p "Notfallnummer 1: ")
+                       (input ((type "text") (name "notfallnr1") (id "info-input") (value ,notfallnr1))))
+                  (div ((id "infodiv")) (p "Notfallnummer 2: ")
+                       (input ((type "text") (name "notfallnr2") (id "info-input") (value ,notfallnr2))))
+                  (div ((id "infodiv")) (p "Besonderes: ")
+                       (input ((type "text") (name "specials") (id "info-input") (value ,specials))))
                 )
                 (table ((id "abholungstable"))
                        (colgroup
@@ -139,38 +145,39 @@
                         )
                        (tr
                         (td ((style , (if (equal? mo_ab "") "background-color:#FF5959;" "") )) "Montag")
-                        (td ((style , (if (equal? zahl_heute 0) "background-color:#FFE047;" ""))) , mo_ab)
+                        (td ((style , (if (equal? zahl_heute 0) "background-color:#FFE047;" "")))
+                            (input ((type "text") (name "mo_ab") (id "info-input") (value ,mo_ab))))
                         )
                        (tr
                         (td ((style , (if (equal? di_ab "") "background-color:#FF5959;" "") )) "Dienstag")
-                        (td ((style , (if (equal? zahl_heute 1) "background-color:#FFE047;" ""))) , di_ab)
+                        (td ((style , (if (equal? zahl_heute 1) "background-color:#FFE047;" "")))
+                            (input ((type "text") (name "di_ab") (id "info-input") (value ,di_ab))))
                         )
                        (tr
                         (td ((style , (if (equal? mi_ab "") "background-color:#FF5959;" "") )) "Mittwoch")
-                        (td ((style , (if (equal? zahl_heute 2) "background-color:#FFE047;" ""))) , mi_ab)
+                        (td ((style , (if (equal? zahl_heute 2) "background-color:#FFE047;" "")))
+                            (input ((type "text") (name "mi_ab") (id "info-input") (value ,mi_ab))))
                         )
                        (tr
                         (td ((style , (if (equal? do_ab "") "background-color:#FF5959;" "") )) "Donnerstag")
-                        (td ((style , (if (equal? zahl_heute 3) "background-color:#FFE047;" ""))) , do_ab)
+                        (td ((style , (if (equal? zahl_heute 3) "background-color:#FFE047;" "")))
+                            (input ((type "text") (name "do_ab") (id "info-input") (value ,do_ab))))
                         )
                        (tr
                         (td ((style , (if (equal? fr_ab "") "background-color:#FF5959;" "") )) "Freitag")
-                        (td ((style , (if (equal? zahl_heute 4) "background-color:#FFE047;" ""))) , fr_ab)
+                        (td ((style , (if (equal? zahl_heute 4) "background-color:#FFE047;" "")))
+                            (input ((type "text") (name "fr_ab") (id "info-input") (value ,fr_ab))))
                         )
                  )
                 
-                
+                (div ((id "spacer")) (button ((type "submit") (id "submitbutton") )  "Fertig"))
                 )
 
-           
-   (div ((id "spacer")) (a ((id "editlink") (href ,(string-append "../edit/" kindid_str))) "Bearbeite Info"))
-          
-
            (br)
-           
            (footer
     (p "\u00A9 Can Nayci") 
-   ) 
+   )
+            
 
            ))))
 
