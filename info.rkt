@@ -104,7 +104,8 @@
 
            (header
 
-            (img ([src "/logo.png"] [alt "corvey-logo"]))
+            (a ((href "../"))
+                      (img ([src "/logo.png"] [alt "corvey-logo"])))
             
            (h1 "Information")
 

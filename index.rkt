@@ -12,7 +12,9 @@
 (require db)
 (require racket/format)
 (require web-server/dispatchers/dispatch-log)
+(require web-server/http/bindings)
 
+(date-display-format 'german)
 (require "info.rkt")
 (require "search.rkt")
 (require "style.rkt")
@@ -22,6 +24,12 @@
   (fifth (struct->list req))
   )
 
+
+
+(define secondstamp (current-seconds))
+(define 1day 86400)
+(define days 0)
+(define heute (seconds->date (+ secondstamp (* days 1day))))
 
 
 ;
@@ -45,7 +53,7 @@
   (string-append (vector-ref data 1) " " (vector-ref data 2)))
 
 (define (number_today)
-  (define wrong_format (seventh (struct->list (current-date))))
+  (define wrong_format (seventh (struct->list heute)))
   (if (and (> wrong_format 0) (< wrong_format 5)) (- wrong_format 1) 4 )
   )
 
@@ -66,39 +74,39 @@
      ))
 
 (define (heute_abgeholt? id)
-  (define rowlist (query-rows aDB "select * from abholung_log where datum  = date()" ))
+  (define rowlist (query-rows aDB (string-append "select * from abholung_log where datum  = date('now', '" (number->string days) " day')")))
   (define times-found (apply + (for/list ((i rowlist) #:when (equal? id (vector-ref i 1))) 1 )))
-  (printf "~s abgeholt row-list ~s ; ~s ~n" id rowlist times-found )
+
   (if (> times-found 0) #t #f))
 (define (heute_anwesend? id)
-  (define rowlist (query-rows aDB "select * from anwesend_log where datum  = date()" ))
+  (define rowlist (query-rows aDB (string-append "select * from anwesend_log where datum  = date('now', '" (number->string days) " day')")))
   (define times-found (apply + (for/list ((i rowlist) #:when (equal? id (vector-ref i 1))) 1 )))
-  (printf "~s anwesend row-list ~s ; ~s ~n" id rowlist times-found)
+
   (if (> times-found 0) #t #f))
 (define (heute_krank? id)
-  (define rowlist (query-rows aDB "select * from krank_log where datum  = date()" ))
+  (define rowlist (query-rows aDB (string-append "select * from krank_log where datum  = date('now', '" (number->string days) " day')")))
   (define times-found (apply +  (for/list ((i rowlist) #:when (equal? id (vector-ref i 1))) 1 )))
-  (printf "~s krank row-list ~s ; ~s ~n" id rowlist times-found)
+
   (if (> times-found 0) #t #f))
 
 (define (set_krank id bool) ;creates/deletes in db ;date
 
   (cond
-    (bool  (query-exec aDB "insert into krank_log values (date(), $1)" id)  )
+    (bool  (query-exec aDB (string-append "insert into krank_log values ( date('now', '" (number->string days) " day')  , $1)") id)  )
     (else
      (query-exec aDB "delete from krank_log where kind_id = $1" id)
      ))) 
 (define (set_anwesend id bool)
 
   (cond
-    (bool  (query-exec aDB "insert into anwesend_log values (date(), $1)" id)  )
+   (bool  (query-exec aDB (string-append "insert into anwesend_log values ( date('now', '" (number->string days) " day')  , $1)") id)  )
     (else
      (query-exec aDB "delete from anwesend_log where kind_id = $1" id)
      )) );date und timestamp
 (define (set_abgeholt id bool)
 
   (cond
-    (bool  (query-exec aDB "insert into abholung_log values (date(), $1, datetime('now'))" id)  )
+    (bool  (query-exec aDB (string-append "insert into abholung_log values ( date('now', '" (number->string days) " day')  , $1, datetime('now', '"(number->string days)" days'))") id)  )
     (else
      (query-exec aDB "delete from abholung_log where kind_id = $1" id)
      )) );date
@@ -116,6 +124,14 @@
               id vorname nachname geb klasse strasse_hnummer plz_ort notfallnummer1 notfallnummer2 specials abholungmo abholungdi abholungmi abholungdo abholungfr )
   )
 
+(define (update_kind_with_list contentlist)
+;                    id                 vorname             nachname          geb                  klasse              strasse              plz                           notfallnummern                  specials                                                                                                                               
+(update_kind (first contentlist) (second contentlist) (third contentlist) (fourth contentlist) (fifth contentlist) (sixth contentlist) (seventh contentlist) (eighth contentlist) (ninth contentlist) (tenth contentlist) (list-ref contentlist 10) (list-ref contentlist 11) (list-ref contentlist 12) (list-ref contentlist 13) (list-ref contentlist 14))
+  )
+
+(define (delete_kind id)
+  (query-exec aDB "delete from kinder where kind_id = $1" id))
+
 
 ;
 ;  db_utils ende
@@ -130,8 +146,6 @@
 (define abgeholt? (heute_abgeholt? kindid))
 (define krank? (heute_krank? kindid))
 (define anwesend? (heute_anwesend? kindid))
-
-(printf "kindid: abgeholt? ~s krank? ~s anwesend? ~s ~n" abgeholt? krank? anwesend?)
   
 (define abholzeit (get_abholung_heute kinddata (number_today)))
 (define abgeholt_button_id (string-append "abgeholt_button-" (~v kindid)))
@@ -160,7 +174,7 @@
          (label ((class "switch"))
          (input ((name, (string-append "abgeholt-" (~v kindid))) (value "0")(type "hidden")
                                    (onchange , (on_button_change "abgeholt")) ))               
-         (input ((id , abgeholt_button_id)(name, (string-append "abgeholt-" (~v kindid))) (value "1")(type "checkbox") , (if abgeholt? `(checked "true") `(href "#") )
+         (input ((class "abgeholt_button")(id , abgeholt_button_id)(name, (string-append "abgeholt-" (~v kindid))) (value "1")(type "checkbox") , (if abgeholt? `(checked "true") `(href "#") )
                                    (onchange , (on_button_change "abgeholt")) ))
          (span ((class "slider round")))))
 )
@@ -170,7 +184,7 @@
          (label ((class "switch"))
          (input ((name, (string-append "krank-" (~v kindid))) (value "0")(type "hidden")
                                 (onchange , (on_button_change "krank")) ))  
-         (input ((id, krank_button_id)(name , (string-append "krank-" (~v kindid))) (value "1")(type "checkbox") , (if krank? `(checked "true") `(href "#") )
+         (input ((class "krank_button")(id, krank_button_id)(name , (string-append "krank-" (~v kindid))) (value "1")(type "checkbox") , (if krank? `(checked "true") `(href "#") )
                                 (onchange , (on_button_change "krank")) ))
          (span ((class "slider round")))))
 )
@@ -180,7 +194,7 @@
          (label ((class "switch"))
          (input ((name, (string-append "anwesend-" (~v kindid))) (value "0")(type "hidden")
                                    (onchange , (on_button_change "anwesend")) ))  
-         (input ((id, anwesend_button_id)(name ,(string-append "anwesend-" (~v kindid))) (value "1")(type "checkbox"), (if anwesend? `(checked "true") `(href "#") )
+         (input ((class "anwesend_button")(id, anwesend_button_id)(name ,(string-append "anwesend-" (~v kindid))) (value "1")(type "checkbox"), (if anwesend? `(checked "true") `(href "#") )
                                    (onchange , (on_button_change "anwesend")) ))
          (span ((class "slider round")))
          ))
@@ -197,14 +211,6 @@
 (define (index-start req)
 
 
-  (println (format
- "~s\n"
- (list 'from (request-client-ip req)
-       'to (request-host-ip req)
-       'for (url->string (request-uri req)) 'at
-       (date->string
-        (seconds->date (current-seconds)) #t)))
-)
   (define post-data (request->post-data req))
   
   (when (bytes? post-data)
@@ -216,8 +222,6 @@
     (define flag (equal? (length arglist) 2)) ;wenn 2 argumente, dann wurde angeschaltet.
     (define state (first (string-split post-string "-")))
     (define kindid0 (string->number (first (string-split (second (string-split post-string "-")) "="))))
-
-    (printf "post-string: ~s; arglist: ~s; flag: ~s; state: ~s; id: ~s; ~n" post-string arglist flag state kindid0)
     
     (cond
       ((and (equal? state "anwesend") flag) (set_krank kindid0 #f) (set_anwesend kindid0 #t) (set_abgeholt kindid0 #f))
@@ -241,7 +245,8 @@
                     (body
 
                      (header
-                      (img ([src "/logo.png"] [alt "corvey-logo"]))
+                      (a ((href "../today"))
+                      (img ([src "/logo.png"] [alt "corvey-logo"])))
 
                       (h1 "Dashboard")
 
@@ -253,7 +258,21 @@
 
   (iframe ((name "iframedummy") (style "display: none")))
 
-  (div ((class "panels")) ,@(map kind_panel (get_all_kind_ids_heute) ))
+  
+
+  (div ((class "panels"))
+
+       (div ((id "datediv"))
+       (a ((href "../-")) (i ((class "arrow left"))))
+       (h2 ,(date->string heute))
+       (a ((href "../+")) (i ((class "arrow right"))))
+        
+       )
+
+       ,@(map kind_panel (get_all_kind_ids_heute) ))
+
+
+  (div ((id "newdiv"))  (a ((id "new") (href "/create")) "+"))
   
   (footer
     (p "\u00A9 Can Nayci") 
@@ -265,12 +284,65 @@
 
 )
 
+(define (sent-handler req)
+  (define get-data (request-bindings req))
+  (define content-list
+    (for/list ((i get-data)) (cdr i)))
+
+  (update_kind_with_list content-list)
+  
+  (index-start req)
+  
+)
+
+(define (delete-handler req)
+  (define get-data (request-bindings req))
+  (define x (cdar get-data))
+  (delete_kind x)
+  (index-start req)
+)
+
+(define (create-handler req)
+  (define new_id (add1 (vector-ref (last (query-rows aDB "select kind_id from kinder order by kind_id")) 0)))
+  (create_kind "Neues" "Kind" "01.01.2000" "5a" "Musterstrasse 1" "22222 Hamburg" "0176 123" "/" "Allergien, etc." "13:00" "13:00" "13:00" "13:00" "13:00")
+  (edit-app req new_id)
+  )
+
+;(define days 0)
+;(define heute (seconds->date (+ secondstamp (* days 1day))))
+
+(define (go1dayforth-handler req)
+
+  (set! days (add1 days))
+  (set! heute (seconds->date (+ secondstamp (* days 1day))))
+  (index-start req)
+  )
+
+(define (go1dayback-handler req)
+
+  (set! days (- days 1))
+  (set! heute (seconds->date (+ secondstamp (* days 1day))))
+  (index-start req)
+  )
+
+(define (today-handler req)
+(set! days 0)
+(set! heute (seconds->date (+ secondstamp (* days 1day))))
+(index-start req)
+  )
+
 
 (define-values (dispatch input-url)
   (dispatch-rules
    (("info" (integer-arg)) info-app)
    (("search") search-app)
    (("edit" (integer-arg)) edit-app)
+   (("sent") sent-handler)
+   (("delete") delete-handler)
+   (("create") create-handler)
+   (("+") go1dayforth-handler)
+   (("-") go1dayback-handler)
+   (("today") today-handler)
    (("") index-start)
    (else index-start)
    ))

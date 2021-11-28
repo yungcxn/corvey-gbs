@@ -39,7 +39,7 @@ a#info {
   border-radius: 15px;
   border: solid #ccc;
   border-width: 3px;
-  background-color: #ccc;
+  background-color: #005CA9;
   color: white;
   font-weight: bold;
   font-style: italic;
@@ -79,6 +79,7 @@ img {
 form#search {
   width: 20%;
   height: 20%;
+  margin-right: 20px;
 }
 
 input#search-field {
@@ -104,7 +105,8 @@ p {
 div.panels {
   display: flex;
   flex-direction: column;
-  margin: 10px 5%; 
+  margin: 10px 5%;
+  margin-bottom: 0px;
   
 }
 
@@ -251,6 +253,94 @@ input#search-field {
   font-size: 150%;
 }
 
+a#editlink, button#submitbutton {
+  font-size: 150%;
+  background-color: #ccc;
+  padding: 5px 10px;
+  border-radius: 15px;
+width: 30%;
+display: table;
+  margin: 0 auto;
+}
+
+a#editlink:hover {
+  color: #888888;
+}
+
+
+
+input#info-input {
+  margin-left: 20px;
+  font-size: 130%;
+  height: 30%;
+}
+
+div#infodiv {
+  display: flex;
+flex-flow: row;
+margin-right: 10px;
+background-color: #dddddd;
+
+align-items: center;
+
+padding: 5px 10px;
+margin: 5px;
+
+}
+
+div#infodiv p{
+
+}
+
+form#info section#infosection {
+  width: 30%;
+}
+
+form table {
+  margin-left: 100px;
+}
+
+div#tempspacer {
+  display: flex;
+  justify-content: center;
+}
+
+
+
+@media screen and (max-width: 1200px) {
+
+div#tempspacer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-flow: column;  
+}
+
+div#tempspacer table{
+  margin-top: 100px;
+  width: 60%;
+  margin: auto;
+}
+
+
+div#tempspacer section#infosection {
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 100px;
+}
+
+div#tempsection {
+  flex-flow: column;
+}
+
+div#infodiv {
+
+}
+
+}
+
+
 @media screen and (max-width: 1100px) {
 
 
@@ -320,6 +410,7 @@ div.panels {
   margin-right: 0px;
 }
 
+
 }
 
 @media screen and (max-width: 550px) {
@@ -348,23 +439,69 @@ margin-top: 30px;
 
 }
 
-a#editlink, button#submitbutton {
-  font-size: 150%;
-  background-color: #ccc;
-  padding: 5px 10px;
-  border-radius: 15px;
-width: 30%;
-display: table;
-  margin: 0 auto;
+
+button#deletebutton {
+  background-color: #FF4A3D;
+  font-size: 130%;
 }
 
-a#editlink:hover {
-  color: #888888;
+div#newdiv {
+  width: 100%;
+  margin: 0px;
+  padding-top: 0px;
+  padding-bottom: 100px;
 }
 
-div#info {
-display: flex;
-flex-flow: row;
+div#newdiv a#new{
+  float: right;
+  margin-right: 10%;
+  font-size: 200%;
+  background-color: #005CA9;
+  border-radius: 1000px;
+  color: white;
+  padding: 10px 20px;
+box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+
+div#newdiv a#new:hover{
+  background-color: #00437A;
+  color: #eeeeee;
+}
+
+div#datediv {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+}
+
+
+.arrow {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 5px;
+  margin: 5px;
+  
+}
+
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.left {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+
+.up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
 }
 
 /*button section*/
@@ -414,6 +551,22 @@ input:checked + .slider {
 
 input:focus + .slider {
   box-shadow: 0 0 1px #005CA9;
+}
+
+input.krank_button:checked + .slider {
+background-color: #FF4A3D;
+}
+
+input.krank_button:focus + .slider {
+  box-shadow: 0 0 1px #FF4A3D;
+}
+
+input.abgeholt_button:checked + .slider {
+background-color: #87D358;
+}
+
+input.abgeholt_button:focus + .slider {
+  box-shadow: 0 0 1px #87D358;
 }
 
 input:checked + .slider:before {

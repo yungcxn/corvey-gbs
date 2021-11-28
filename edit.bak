@@ -103,8 +103,7 @@
 
            (header
 
-            (a ((href "../"))
-                      (img ([src "/logo.png"] [alt "corvey-logo"])))
+            (img ([src "/logo.png"] [alt "corvey-logo"]))
             
            (h1 "Bearbeite Kind")
 
@@ -117,15 +116,11 @@
            
            (p  ((id "fullnameinfo")) , (string-append vorname " " nachname))
            (form ((method "get") (action "../sent")(id "info"))
-                 (input ((type "hidden") (value ,kindid_str) (name "kindid")) )
-                 (div ((id "tempspacer"))
                 (section ((id "infosection"))
                   (div ((id "infodiv")) (p "Vorname: ")
                        (input ((type "text") (name "vorname") (id "info-input") (value ,vorname))))
                   (div ((id "infodiv")) (p "Nachname: ")
                        (input ((type "text") (name "nachname") (id "info-input") (value ,nachname))))
-                  (div ((id "infodiv")) (p "Geburtstag ")
-                       (input ((type "text") (name "geburtstag") (id "info-input") (value , geburtstag))))
                   (div ((id "infodiv")) (p "Klasse: ")
                        (input ((type "text") (name "klasse") (id "info-input") (value ,klasse))))
                   (div ((id "infodiv")) (p "Strasse: ")
@@ -173,16 +168,9 @@
                         (td ((style , (if (equal? zahl_heute 4) "background-color:#FFE047;" "")))
                             (input ((type "text") (name "fr_ab") (id "info-input") (value ,fr_ab))))
                         )
-                 ) )
+                 )
                 
                 (div ((id "spacer")) (button ((type "submit") (id "submitbutton") )  "Fertig"))
-                )
-           
-           (div ((id "spacer"))
-                (form ((method "get") (action "../delete")(id "delete"))
-                      (input ((type "hidden") (value ,kindid_str) (name "kindid")) )
-                      (button ((type "submit") (id "deletebutton") )  "Entferne Kind")
-                      )
                 )
 
            (br)
